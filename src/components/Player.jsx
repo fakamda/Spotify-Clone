@@ -19,6 +19,21 @@ export const Volume = () => (
 
 export function Player () {
     const [isPlaying, setIsPlaying] = useState(false)
+    const [currentSong, setCurrentSong] = useState(null)
+    const audioRef = useRef()
+
+    const handleClick = () => {
+        if (isPlaying) {
+            audioRef.current.pause()
+        } else {
+            audioRef.current.src = `/music/1/01.mp3`
+            audioRef.current.play()
+            audio.current.volume = 0.1
+        }
+
+        setIsPlaying(!isPlaying)
+    }
+
     return (
         <div className="flex flex-row justify-between w-full px-4 z-50">
             <div>
@@ -26,15 +41,15 @@ export function Player () {
             </div>
             <div className="grid place-content-center gap-4 flex-1">
                 <div className="flex justify-center">
-                    <button className="bg-white rounded-full p-2" onClick={() => setIsPlaying(!playing)}>
+                    <button className="bg-white rounded-full p-2" onClick={handleClick}>
                         {isPlaying ? <Pause /> : <Play />}
                     </button>
                 </div>
-                Reproductor
             </div>
-            <div>
+            <div className="grid place-content-center">
                 Volumen
             </div>
+            <audio src={audioRef}></audio>
         </div>
     )
 }
