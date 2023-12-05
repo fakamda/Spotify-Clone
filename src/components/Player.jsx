@@ -39,6 +39,42 @@ const CurrentSong = ({ image, title, artists }) => {
 
 }
 
+const SongControl = ({audio}) => {
+    const [currentTime, setCurrentTime] = useState(0)
+
+    useEffect(() => {
+        audio.current.addEventListener('timeupdate', handleTimeUpdate)
+        return () => {
+            audio.current.removeEventListener('timeupdate', handleTimeUpdate)
+        }
+    })
+
+    const handleTimeUpdate = () => {
+        setCurrentTime(audio.current.currentTime)
+    }
+
+    const duration = audio?.current?.duration ?? 0
+
+    return (
+        <div className="flex gap-x-3">
+            <span>{currentTime}</span>
+
+            <Slider
+                defaultValue={[0]}
+                value={[currentTime]}
+                max={audio?.current?.duration ?? 0}
+                min={0}
+                className="w-[500px]"
+                onValueChange={(value) => {
+                    audio.current.currentTime = value
+                }}
+            />
+
+            <span>{duration}</span>
+        </div>
+    )
+}
+
 const VolumeControl = () => {
     const volume = usePlayerStore(state => state.volume)
     const setVolume = usePlayerStore(state => state.setVolume)
@@ -57,7 +93,7 @@ const VolumeControl = () => {
 
     return (
         <div className="flex justify-center gap-x-2">
-            <button onClick={handleClickVolume}>
+            <button className="opacity-70 hover:opacity-100 transition" onClick={handleClickVolume}>
                 {isVolumeSilenced ? <VolumeSilence /> : <Volume  />}
             </button>
 
@@ -112,10 +148,11 @@ export function Player () {
                 <CurrentSong {...currentMusic.song} />
             </div>
             <div className="grid place-content-center gap-4 flex-1">
-                <div className="flex justify-center">
+                <div className="flex justify-center flex-col items-center">
                     <button className="bg-white rounded-full p-2" onClick={handleClick}>
                         {isPlaying ? <Pause /> : <Play />}
                     </button>
+                    <SongControl audio={audioRef} />
                     <audio ref={audioRef}></audio>
                 </div>
 
