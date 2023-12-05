@@ -39,9 +39,30 @@ const CurrentSong = ({ image, title, artists }) => {
 
 }
 
+const VolumeControl = () => {
+    const volume = usePlayerStore(state => state.volume)
+    const setVolume = usePlayerStore(state => state.setVolume)
+
+    return (
+        <div className="flex justify-center gap-x-2">
+            {volume < 0.1 ? <VolumeSilence /> : <Volume />}
+            <Slider
+                defaultValue={[100]}
+                max={100}
+                min={0}
+                className="w-[95px]"
+                onValueChange={(value) => {
+                    const [newVolume] = value
+                    const volumeValue = newVolume / 100
+                    setVolume(volumeValue)
+                }}
+            />
+        </div>
+    )
+} 
 
 export function Player () {
-    const { currentMusic, isPlaying, setIsPlaying } = usePlayerStore(state => state)
+    const { currentMusic, isPlaying, setIsPlaying, volume } = usePlayerStore(state => state)
     const audioRef = useRef()
     const volumeRef = useRef(1)
 
@@ -52,11 +73,15 @@ export function Player () {
     }, [isPlaying])
 
     useEffect(() => {
+        audioRef.current.volume = volume
+    }, [volume])
+
+    useEffect(() => {
         const { song, playlist, songs } = currentMusic
         if(song) {
             const src = `/music/${playlist?.id}/0${song.id}.mp3`
             audioRef.current.src = src
-            audioRef.current.volume = volumeRef.current
+            audioRef.current.volume = volume
             audioRef.current.play()
         }
     }, [currentMusic])
@@ -75,23 +100,13 @@ export function Player () {
                     <button className="bg-white rounded-full p-2" onClick={handleClick}>
                         {isPlaying ? <Pause /> : <Play />}
                     </button>
+                    <audio ref={audioRef}></audio>
                 </div>
+
             </div>
             <div className="grid place-content-center">
-                <Slider
-                    defaultValue={[100]}
-                    max={100}
-                    min={0}
-                    className="w-[95px]"
-                    onValueChange={(value) => {
-                        const [newVolume] = value
-                        const volumeValue = newVolume / 100
-                        volumeRef.current = volumeValue
-                        audioRef.current.volume = volumeValue
-                    }}
-                />
+               <VolumeControl />
             </div>
-            <audio ref={audioRef}></audio>
         </div>
     )
 }
