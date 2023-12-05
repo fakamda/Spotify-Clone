@@ -29,7 +29,7 @@ const { title } = Astro.props;
 			<main class="[grid-area:main] rounded-lg bg-zinc-900 overflow-y-auto">
 				<slot />
 			</main>
-			<footer class="[grid-area:player] min-h-[100px]">
+			<footer class="[grid-area:player]">
 				<Player client:load transition:name="media-player" transition:persist /> <!-- el client indica si queremos que se cargue en el cliente o no |idle: cuando es necesario |load: siempre |only: solo cliente |visible: cuando sea visible  -->
 			</footer>
 		</div>

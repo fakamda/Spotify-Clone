@@ -28,7 +28,7 @@ const CurrentSong = ({ image, title, artists }) => {
 
             <div className="flex flex-col">
                 <h3 className="font-semibold text-sm block">
-                    {title}
+                    { title }
                 </h3>
                 <span className="text-xs opacity-80">
                     { artists?.join(', ') }
@@ -83,7 +83,7 @@ export function Player () {
                     max={100}
                     min={0}
                     className="w-[95px]"
-                    onValueChange={() => {
+                    onValueChange={(value) => {
                         const [newVolume] = value
                         const volumeValue = newVolume / 100
                         volumeRef.current = volumeValue
