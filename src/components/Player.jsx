@@ -47,30 +47,41 @@ const SongControl = ({audio}) => {
         return () => {
             audio.current.removeEventListener('timeupdate', handleTimeUpdate)
         }
-    })
+    }, [])
 
     const handleTimeUpdate = () => {
         setCurrentTime(audio.current.currentTime)
     }
 
+    const formatTime = time => {
+        if(time == null) return '0:00'
+
+        const seconds = Math.floor(time % 60) // formatea el tiempo cuando llega a 60 seg y cuenta 1 min
+        const minutes = Math.floor(time / 60)
+
+        return `${minutes}:${seconds.toString().padStart(2, '0')}` //padstart es un metodo el cual le podemos decir la cantidad de espacios que ocupa
+    }
+
     const duration = audio?.current?.duration ?? 0
 
     return (
-        <div className="flex gap-x-3">
-            <span>{currentTime}</span>
+        <div className="flex gap-x-3 text-xs pt-2">
+            <span className="opacity-50">{formatTime(currentTime)}</span>
 
             <Slider
-                defaultValue={[0]}
+                // defaultValue={[0]}
                 value={[currentTime]}
                 max={audio?.current?.duration ?? 0}
                 min={0}
                 className="w-[500px]"
                 onValueChange={(value) => {
-                    audio.current.currentTime = value
+                    const [newCurrentTime] = value
+                    audio.current.currentTime = newCurrentTime
+                
                 }}
             />
 
-            <span>{duration}</span>
+            <span className="opacity-50">{formatTime(duration)}</span>
         </div>
     )
 }
